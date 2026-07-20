@@ -1,0 +1,8 @@
+.section {
+  padding: 90px 0;
+}
+
+.section-bg-gray  { background: var(--background); }
+.section-bg-white { background: #ffffff; }
+.section-bg-blue  { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; }
+.section-bg-dark  { background: var(--secondary); color: white; }

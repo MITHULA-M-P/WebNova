@@ -1,0 +1,107 @@
+import { pricingPlans } from "../data/pricing";
+import BudgetEstimator from "../components/estimator/BudgetEstimator";
+import "../css/Pricing.css";
+
+function Pricing() {
+  return (
+    <div className="pricing-page page-content">
+      {/* Header */}
+      <section className="pricing-hero">
+        <div className="container text-center">
+          <span className="section-label">Cost Estimator</span>
+          <h1 className="pricing-title">
+            Calculate Your <span>Website Cost</span>
+          </h1>
+          <p className="pricing-subtitle">
+            Select your website options, choose custom features, and see your live estimated cost instantly.
+          </p>
+        </div>
+      </section>
+
+      {/* Live Estimator Section */}
+      <section className="estimator-calculator-section section" style={{ paddingBottom: "40px" }}>
+        <div className="container">
+          <BudgetEstimator />
+        </div>
+      </section>
+
+      {/* Plans Section */}
+      <section className="pricing-grid-section section" style={{ paddingTop: "40px" }}>
+        <div className="container">
+          <div className="text-center" style={{ marginBottom: "50px" }}>
+            <span className="section-label">Fixed Packages</span>
+            <h2>Or Choose a <span>Standard Plan</span></h2>
+            <p className="section-subtitle">Pre-packaged configurations for businesses looking to launch quickly.</p>
+          </div>
+
+          <div className="pricing-grid">
+            {pricingPlans.map((plan) => {
+              const isPro = plan.name.includes("Pro");
+              return (
+                <div
+                  key={plan.id}
+                  className={`pricing-card ${isPro ? "featured-card" : ""}`}
+                >
+                  {isPro && <div className="card-badge">Most Popular</div>}
+                  <div className="card-header">
+                    <h3>{plan.name}</h3>
+                    <div className="card-price">
+                      <span className="currency">₹</span>
+                      <strong className="amount">{plan.basePrice.toLocaleString("en-IN")}</strong>
+                      <span className="duration">/ flat fee</span>
+                    </div>
+                    <p className="delivery-time">Estimated delivery: {plan.estimatedDelivery}</p>
+                  </div>
+
+                  <div className="card-body">
+                    <p className="includes-label">Includes:</p>
+                    <ul className="features-list">
+                      {plan.features.map((feature, idx) => (
+                        <li key={idx}>
+                          <span className="check-icon">✓</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="card-footer">
+                    <a
+                      href={`/planner`}
+                      className={`btn ${isPro ? "btn-primary" : "btn-secondary"} w-full`}
+                      style={{ textAlign: "center" }}
+                    >
+                      Choose Plan
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Custom Needs Section */}
+      <section className="custom-plan-section text-center">
+        <div className="container">
+          <div className="custom-plan-inner">
+            <h2>Need More Personalised Recommendations?</h2>
+            <p>
+              Use our interactive website planner to answer a few specific business questions, and our wizard will generate a complete blueprint for you.
+            </p>
+            <div className="custom-plan-actions">
+              <a href="/planner" className="btn btn-primary">
+                Use Website Planner
+              </a>
+              <a href="/book-call" className="btn btn-secondary">
+                Book Discovery Call
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default Pricing;

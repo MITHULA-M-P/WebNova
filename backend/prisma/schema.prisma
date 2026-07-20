@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Customer {
+  id            Int           @id @default(autoincrement())
+  business_name String?
+  email         String        @unique
+  phone         String
+  created_at    DateTime      @default(now())
+  plans         WebsitePlan[]
+  bookings      Booking[]
+
+  @@map("customers")
+}
+
+model WebsitePlan {
+  id            Int       @id @default(autoincrement())
+  customer_id   Int
+  website_type  String
+  business_goal String
+  pages         Int
+  budget        Float
+  brand_color   String?
+  has_logo      Boolean   @default(false)
+  created_at    DateTime  @default(now())
+  
+  customer      Customer  @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  features      Feature[]
+
+  @@map("website_plans")
+}
+
+model Feature {
+  id           Int         @id @default(autoincrement())
+  plan_id      Int
+  feature_name String
+
+  plan         WebsitePlan @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+
+  @@map("features")
+}
+
+model Booking {
+  id           Int      @id @default(autoincrement())
+  customer_id  Int
+  booking_date String
+  booking_time String
+  status       String   @default("pending")
+  message      String?
+  created_at   DateTime @default(now())
+
+  customer     Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}

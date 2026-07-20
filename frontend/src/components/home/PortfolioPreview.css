@@ -1,0 +1,113 @@
+.portfolio-preview {
+  padding: 80px 8%;
+  background: #f8fafc;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-title h2 {
+  font-size: 2.2rem;
+  color: #0f172a;
+}
+
+.section-title p {
+  color: #64748b;
+  margin-top: 10px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.project-card {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  transition: .3s;
+  border: 1px solid #e2e8f0;
+}
+
+.project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 35px rgba(0,0,0,.08);
+}
+
+.browser-top {
+  background: #e2e8f0;
+  padding: 12px;
+}
+
+.browser-top span {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #94a3b8;
+  margin-right: 5px;
+}
+
+.browser-body {
+  padding: 20px;
+}
+
+.hero-block {
+  height: 120px;
+  background: #cbd5e1;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.text-block {
+  height: 12px;
+  background: #e2e8f0;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.short {
+  width: 70%;
+}
+
+.button-block {
+  width: 100px;
+  height: 35px;
+  background: #2563eb;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.project-content {
+  padding: 25px;
+}
+
+.project-content span {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.project-content h3 {
+  margin: 10px 0;
+}
+
+.project-content p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.portfolio-btn {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.portfolio-btn a {
+  background: #2563eb;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 10px;
+}

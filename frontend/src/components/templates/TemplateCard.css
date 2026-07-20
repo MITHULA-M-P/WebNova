@@ -1,0 +1,36 @@
+.template-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:30px;
+    cursor:pointer;
+    transition:.3s;
+    text-align:center;
+}
+
+.template-card:hover{
+    transform:translateY(-8px);
+    box-shadow:var(--shadow);
+}
+
+.template-icon{
+    font-size:50px;
+    margin-bottom:20px;
+}
+
+.template-card h3{
+    margin-bottom:10px;
+}
+
+.template-card p{
+    color:var(--muted);
+    margin-bottom:20px;
+}
+
+.template-card button{
+    background:var(--primary);
+    color:white;
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+}

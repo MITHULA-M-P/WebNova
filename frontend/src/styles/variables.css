@@ -1,0 +1,53 @@
+:root {
+  /* Brand Colors */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --accent: #06b6d4;
+
+  /* Neutrals */
+  --secondary: #0f172a;
+  --text: #334155;
+  --muted: #64748b;
+  --background: #f8fafc;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+
+  /* Gradients */
+  --grad-hero: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%);
+  --grad-primary: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  --grad-card: linear-gradient(145deg, #ffffff, #f8fafc);
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-blur: blur(16px);
+
+  /* Radii */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow: 0 8px 24px rgba(0,0,0,0.10);
+  --shadow-md: 0 16px 40px rgba(0,0,0,0.13);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,0.16);
+  --shadow-blue: 0 8px 30px rgba(37,99,235,0.30);
+
+  /* Typography */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Inter', sans-serif;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Container */
+  --container: 1200px;
+}

@@ -1,0 +1,54 @@
+/* BookCall styles */
+.book-call-section{
+    padding:80px 20px;
+    background:#f8fafc;
+}
+
+.book-call-container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:40px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.book-call-container h1{
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.book-call-container p{
+    text-align:center;
+    margin-bottom:30px;
+    color:#64748b;
+}
+
+.book-call-container form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.book-call-container input,
+.book-call-container select{
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:16px;
+}
+
+.book-call-container button{
+    margin-top:20px;
+    padding:14px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.book-call-container button:hover{
+    background:#1d4ed8;
+}
