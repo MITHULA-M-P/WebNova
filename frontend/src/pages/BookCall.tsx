@@ -1,25 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { createBooking } from "../services/api";
+import { createBooking, getAvailableSlots, type TimeSlot } from "../services/api";
 import "../css/BookCall.css";
 
 function BookCall() {
   const location = useLocation();
   const prepopulated = location.state as { email?: string; phone?: string; name?: string } | undefined;
 
+  const todayStr = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     name: prepopulated?.name || "",
     email: prepopulated?.email || "",
     phone: prepopulated?.phone || "",
-    date: "",
+    date: todayStr,
     time: "",
     message: "",
   });
 
+  const [slots, setSlots] = useState<TimeSlot[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [bookingId, setBookingId] = useState<number | null>(null);
+
+  // Fetch slots whenever selected date changes
+  useEffect(() => {
+    if (!formData.date) return;
+    setLoadingSlots(true);
+    getAvailableSlots(formData.date)
+      .then((data) => {
+        setSlots(data);
+        // Reset selected time if it's no longer available
+        const currentSlot = data.find((s) => s.startTime === formData.time || s.display === formData.time);
+        if (currentSlot && currentSlot.available === false) {
+          setFormData((prev) => ({ ...prev, time: "" }));
+        }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoadingSlots(false));
+  }, [formData.date]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -37,7 +58,6 @@ function BookCall() {
 
     try {
       const response = await createBooking(formData);
-      console.log("Booking created successfully:", response);
       setBookingId(response.id);
       setIsBooked(true);
     } catch (err: any) {
@@ -61,7 +81,7 @@ function BookCall() {
           <div
             className="booking-summary-card"
             style={{
-              background: "var(--background)",
+              background: "var(--surface-card, var(--background))",
               padding: "24px",
               borderRadius: "12px",
               textAlign: "left",
@@ -152,6 +172,7 @@ function BookCall() {
                 id="date-input"
                 type="date"
                 name="date"
+                min={todayStr}
                 required
                 value={formData.date}
                 onChange={handleChange}
@@ -159,7 +180,9 @@ function BookCall() {
             </div>
 
             <div>
-              <label htmlFor="time-input">Select Time</label>
+              <label htmlFor="time-input">
+                Select Time {loadingSlots && <span style={{ fontSize: "12px", color: "var(--muted)" }}>(loading slots…)</span>}
+              </label>
               <select
                 id="time-input"
                 name="time"
@@ -167,13 +190,16 @@ function BookCall() {
                 value={formData.time}
                 onChange={handleChange}
               >
-                <option value="">Choose Time</option>
-                <option>10:00 AM</option>
-                <option>11:00 AM</option>
-                <option>12:00 PM</option>
-                <option>02:00 PM</option>
-                <option>03:00 PM</option>
-                <option>04:00 PM</option>
+                <option value="">Choose Time Slot</option>
+                {slots.map((s) => {
+                  const slotLabel = s.display || `${s.startTime} - ${s.endTime}`;
+                  const val = s.startTime || slotLabel;
+                  return (
+                    <option key={s.id} value={val} disabled={s.available === false}>
+                      {slotLabel} {s.available === false ? "(Unavailable)" : ""}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>

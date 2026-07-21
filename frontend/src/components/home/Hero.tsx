@@ -1,7 +1,17 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getWebsiteSettings, getPublicStatistics, type WebsiteSettings, type StatisticItem } from "../../services/api";
 import "../../css/Hero.css";
 
 function Hero() {
+  const [settings, setSettings] = useState<WebsiteSettings | null>(null);
+  const [stats, setStats] = useState<StatisticItem[]>([]);
+
+  useEffect(() => {
+    getWebsiteSettings().then(setSettings).catch(console.error);
+    getPublicStatistics().then(setStats).catch(console.error);
+  }, []);
+
   return (
     <section className="hero">
       {/* Background blobs */}
@@ -15,11 +25,13 @@ function Hero() {
           <span className="hero-pill">🚀 Custom Websites for Every Business</span>
 
           <h1 className="hero-heading">
-            Launch a <span>Professional Website</span> Without the Technical Stress
+            {settings?.hero_title || (
+              <>Launch a <span>Professional Website</span> Without Technical Stress</>
+            )}
           </h1>
 
           <p className="hero-desc">
-            We design fast, mobile-friendly, SEO-optimized websites tailored exactly to your business. Tell us your idea, get a personalised plan, and book a discovery call in just minutes.
+            {settings?.hero_subtitle || "We design fast, mobile-friendly, SEO-optimized websites tailored exactly to your business."}
           </p>
 
           <div className="hero-actions">
@@ -32,20 +44,34 @@ function Hero() {
           </div>
 
           <div className="hero-stats">
-            <div className="hero-stat">
-              <strong>50+</strong>
-              <span>Projects Delivered</span>
-            </div>
-            <div className="hero-stat-divider" />
-            <div className="hero-stat">
-              <strong>4.9★</strong>
-              <span>Average Rating</span>
-            </div>
-            <div className="hero-stat-divider" />
-            <div className="hero-stat">
-              <strong>5 Days</strong>
-              <span>Avg. Delivery</span>
-            </div>
+            {stats.length > 0 ? (
+              stats.slice(0, 3).map((st, idx) => (
+                <div key={st.id} style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  {idx > 0 && <div className="hero-stat-divider" />}
+                  <div className="hero-stat">
+                    <strong>{st.prefix || ""}{st.value}{st.suffix || ""}</strong>
+                    <span>{st.label}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="hero-stat">
+                  <strong>150+</strong>
+                  <span>Projects Delivered</span>
+                </div>
+                <div className="hero-stat-divider" />
+                <div className="hero-stat">
+                  <strong>4.9★</strong>
+                  <span>Average Rating</span>
+                </div>
+                <div className="hero-stat-divider" />
+                <div className="hero-stat">
+                  <strong>5 Days</strong>
+                  <span>Avg. Delivery</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

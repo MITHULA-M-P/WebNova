@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
 import "../../css/Navbar.css";
 
 const navLinks = [
@@ -14,6 +15,7 @@ const navLinks = [
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -46,6 +48,29 @@ function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          <button
+            type="button"
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === "light" ? "Dark" : "Light"} mode`}
+            style={{
+              padding: "8px 12px",
+              borderRadius: "8px",
+              background: "var(--surface-hover, rgba(0,0,0,0.05))",
+              border: "1px solid var(--border)",
+              color: "var(--text)",
+              cursor: "pointer",
+              fontSize: "14px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              marginRight: "8px",
+            }}
+          >
+            <span>{theme === "light" ? "🌙" : "☀️"}</span>
+            <span>{theme === "light" ? "Dark" : "Light"}</span>
+          </button>
+
           <Link to="/book-call" className="nav-cta btn btn-primary" onClick={closeMenu}>
             Book a Call
           </Link>

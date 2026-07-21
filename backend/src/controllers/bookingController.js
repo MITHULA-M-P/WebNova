@@ -1,5 +1,6 @@
 const { z } = require("zod");
 const prisma = require("../config/db");
+const { sendBookingConfirmationEmail, sendBookingStatusUpdateEmail } = require("../services/emailService");
 
 // Zod validation schemas
 const createBookingSchema = z.object({
@@ -21,23 +22,38 @@ const updateBookingSchema = z.object({
 // POST /api/bookings
 async function createBooking(req, res, next) {
   try {
-    const data = req.validatedBody;
+    const data = req.validatedBody || req.body;
 
-    // 1. Find or create customer
+    // 1. Check if the chosen date & time is already booked and confirmed
+    const existingConflict = await prisma.booking.findFirst({
+      where: {
+        booking_date: data.date,
+        booking_time: data.time,
+        status: { in: ["confirmed", "pending"] },
+      },
+    });
+
+    if (existingConflict) {
+      return res.status(400).json({
+        error: "Selected time slot is already booked for this date. Please select another slot.",
+      });
+    }
+
+    // 2. Find or create customer
     const customer = await prisma.customer.upsert({
-  where: {
-    email: data.email,
-  },
-  update: {
-    phone: data.phone,
-  },
-  create: {
-    email: data.email,
-    phone: data.phone,
-    business_name: data.name,
-  },
-});
-    // 2. Create Booking
+      where: { email: data.email },
+      update: {
+        phone: data.phone,
+        business_name: data.name,
+      },
+      create: {
+        email: data.email,
+        phone: data.phone,
+        business_name: data.name,
+      },
+    });
+
+    // 3. Create Booking
     const booking = await prisma.booking.create({
       data: {
         customer_id: customer.id,
@@ -51,24 +67,90 @@ async function createBooking(req, res, next) {
       },
     });
 
+    // 4. Send email notification asynchronously
+    sendBookingConfirmationEmail(booking).catch((err) =>
+      console.error("Failed to send booking notification email:", err)
+    );
+
     return res.status(201).json(booking);
   } catch (error) {
     next(error);
   }
 }
 
-// GET /api/bookings
+// GET /api/bookings (Search, Filter, Pagination, Sorting)
 async function getAllBookings(req, res, next) {
   try {
-    const bookings = await prisma.booking.findMany({
-      include: {
-        customer: true,
-      },
-      orderBy: {
-        created_at: "desc",
+    const {
+      search = "",
+      status = "",
+      date = "",
+      page = "1",
+      limit = "10",
+      sortBy = "created_at",
+      sortOrder = "desc",
+    } = req.query;
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build Prisma query filters
+    const where = {};
+
+    if (status && status !== "all") {
+      where.status = status;
+    }
+
+    if (date) {
+      where.booking_date = date;
+    }
+
+    if (search) {
+      where.customer = {
+        OR: [
+          { business_name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+          { phone: { contains: search, mode: "insensitive" } },
+        ],
+      };
+    }
+
+    const [total, bookings] = await Promise.all([
+      prisma.booking.count({ where }),
+      prisma.booking.findMany({
+        where,
+        include: {
+          customer: true,
+        },
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        skip,
+        take: limitNum,
+      }),
+    ]);
+
+    return res.json({
+      data: bookings.map((b) => ({
+        id: b.id,
+        customerId: b.customer_id,
+        customerName: b.customer?.business_name || "N/A",
+        email: b.customer?.email || "",
+        phone: b.customer?.phone || "",
+        date: b.booking_date,
+        time: b.booking_time,
+        status: b.status,
+        message: b.message,
+        createdAt: b.created_at,
+      })),
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum) || 1,
       },
     });
-    return res.json(bookings);
   } catch (error) {
     next(error);
   }
@@ -93,7 +175,18 @@ async function getBookingById(req, res, next) {
       return res.status(404).json({ error: "Booking not found" });
     }
 
-    return res.json(booking);
+    return res.json({
+      id: booking.id,
+      customerId: booking.customer_id,
+      customerName: booking.customer?.business_name || "N/A",
+      email: booking.customer?.email || "",
+      phone: booking.customer?.phone || "",
+      date: booking.booking_date,
+      time: booking.booking_time,
+      status: booking.status,
+      message: booking.message,
+      createdAt: booking.created_at,
+    });
   } catch (error) {
     next(error);
   }
@@ -107,15 +200,22 @@ async function updateBooking(req, res, next) {
       return res.status(400).json({ error: "Invalid booking ID" });
     }
 
-    const data = req.validatedBody;
+    const data = req.validatedBody || req.body;
 
     const existingBooking = await prisma.booking.findUnique({
       where: { id },
+      include: { customer: true },
     });
 
     if (!existingBooking) {
       return res.status(404).json({ error: "Booking not found" });
     }
+
+    const isDateOrTimeChanged =
+      (data.date && data.date !== existingBooking.booking_date) ||
+      (data.time && data.time !== existingBooking.booking_time);
+
+    const isStatusChanged = data.status && data.status !== existingBooking.status;
 
     const updatedBooking = await prisma.booking.update({
       where: { id },
@@ -130,7 +230,33 @@ async function updateBooking(req, res, next) {
       },
     });
 
-    return res.json(updatedBooking);
+    // Send email notification on status change or reschedule
+    if (isStatusChanged || isDateOrTimeChanged) {
+      const actionType = isDateOrTimeChanged
+        ? "rescheduled"
+        : updatedBooking.status === "confirmed"
+        ? "confirmed"
+        : updatedBooking.status === "cancelled"
+        ? "cancelled"
+        : "update";
+
+      sendBookingStatusUpdateEmail(updatedBooking, actionType).catch((err) =>
+        console.error("Failed to send status update email:", err)
+      );
+    }
+
+    return res.json({
+      id: updatedBooking.id,
+      customerId: updatedBooking.customer_id,
+      customerName: updatedBooking.customer?.business_name || "N/A",
+      email: updatedBooking.customer?.email || "",
+      phone: updatedBooking.customer?.phone || "",
+      date: updatedBooking.booking_date,
+      time: updatedBooking.booking_time,
+      status: updatedBooking.status,
+      message: updatedBooking.message,
+      createdAt: updatedBooking.created_at,
+    });
   } catch (error) {
     next(error);
   }
@@ -156,7 +282,7 @@ async function deleteBooking(req, res, next) {
       where: { id },
     });
 
-    return res.json({ message: "Booking deleted successfully" });
+    return res.json({ success: true, message: "Booking deleted successfully" });
   } catch (error) {
     next(error);
   }

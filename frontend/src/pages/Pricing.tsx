@@ -1,8 +1,21 @@
-import { pricingPlans } from "../data/pricing";
+import { useEffect, useState } from "react";
+import { getPublicPlans, type PricingPlan } from "../services/api";
 import BudgetEstimator from "../components/estimator/BudgetEstimator";
 import "../css/Pricing.css";
 
 function Pricing() {
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPublicPlans()
+      .then((data) => {
+        setPlans(data);
+      })
+      .catch((err) => console.error("Error loading pricing plans:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="pricing-page page-content">
       {/* Header */}
@@ -34,50 +47,57 @@ function Pricing() {
             <p className="section-subtitle">Pre-packaged configurations for businesses looking to launch quickly.</p>
           </div>
 
-          <div className="pricing-grid">
-            {pricingPlans.map((plan) => {
-              const isPro = plan.name.includes("Pro");
-              return (
-                <div
-                  key={plan.id}
-                  className={`pricing-card ${isPro ? "featured-card" : ""}`}
-                >
-                  {isPro && <div className="card-badge">Most Popular</div>}
-                  <div className="card-header">
-                    <h3>{plan.name}</h3>
-                    <div className="card-price">
-                      <span className="currency">₹</span>
-                      <strong className="amount">{plan.basePrice.toLocaleString("en-IN")}</strong>
-                      <span className="duration">/ flat fee</span>
+          {loading ? (
+            <div style={{ textAlign: "center", color: "var(--muted)" }}>Loading website plans…</div>
+          ) : (
+            <div className="pricing-grid">
+              {plans.map((plan) => {
+                const isPopular = plan.popular || plan.is_popular;
+                return (
+                  <div
+                    key={plan.id}
+                    className={`pricing-card ${isPopular ? "featured-card" : ""}`}
+                  >
+                    {isPopular && <div className="card-badge">Most Popular</div>}
+                    <div className="card-header">
+                      <h3>{plan.name || plan.title}</h3>
+                      <div className="card-price">
+                        <span className="currency">₹</span>
+                        <strong className="amount">{Number(plan.price).toLocaleString("en-IN")}</strong>
+                        <span className="duration">/ {plan.period || plan.billing_cycle}</span>
+                      </div>
+                      <p className="delivery-time">{plan.description}</p>
                     </div>
-                    <p className="delivery-time">Estimated delivery: {plan.estimatedDelivery}</p>
-                  </div>
 
-                  <div className="card-body">
-                    <p className="includes-label">Includes:</p>
-                    <ul className="features-list">
-                      {plan.features.map((feature, idx) => (
-                        <li key={idx}>
-                          <span className="check-icon">✓</span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    <div className="card-body">
+                      <p className="includes-label">Includes:</p>
+                      <ul className="features-list">
+                        {plan.features.map((feature, idx) => {
+                          const fText = typeof feature === "string" ? feature : feature.text || feature.feature_name;
+                          return (
+                            <li key={idx}>
+                              <span className="check-icon">✓</span>
+                              <span>{fText}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
 
-                  <div className="card-footer">
-                    <a
-                      href={`/planner`}
-                      className={`btn ${isPro ? "btn-primary" : "btn-secondary"} w-full`}
-                      style={{ textAlign: "center" }}
-                    >
-                      Choose Plan
-                    </a>
+                    <div className="card-footer">
+                      <a
+                        href={`/planner`}
+                        className={`btn ${isPopular ? "btn-primary" : "btn-secondary"} w-full`}
+                        style={{ textAlign: "center" }}
+                      >
+                        Choose Plan
+                      </a>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 

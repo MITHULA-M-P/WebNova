@@ -1,26 +1,35 @@
-import { useState } from "react";
-import { portfolioProjects } from "../data/portfolio";
+import { useState, useEffect } from "react";
+import { getPortfolio } from "../services/api";
+import type { Project } from "../types/portfolio";
 import "../css/Portfolio.css";
 
 const categories = [
   "All",
-  "Business",
-  "Restaurant",
-  "Portfolio",
+  "Web Application",
+  "Dashboard",
   "E-Commerce",
-  "Education",
+  "Business",
   "Startup",
 ];
 
 function Portfolio() {
+  const [projects, setProjects] = useState<Project[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPortfolio()
+      .then((data) => {
+        setProjects(data);
+      })
+      .catch((err) => console.error("Error loading portfolio:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filteredProjects =
     selectedCategory === "All"
-      ? portfolioProjects
-      : portfolioProjects.filter(
-          (project) => project.category === selectedCategory
-        );
+      ? projects
+      : projects.filter((project) => project.category === selectedCategory);
 
   return (
     <div className="portfolio-page page-content">
@@ -45,9 +54,7 @@ function Portfolio() {
             {categories.map((cat) => (
               <button
                 key={cat}
-                className={`filter-btn ${
-                  selectedCategory === cat ? "active" : ""
-                }`}
+                className={`filter-btn ${selectedCategory === cat ? "active" : ""}`}
                 onClick={() => setSelectedCategory(cat)}
               >
                 {cat}
@@ -60,50 +67,62 @@ function Portfolio() {
       {/* Portfolio Grid */}
       <section className="portfolio-grid-section section">
         <div className="container">
-          <div className="portfolio-grid">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="project-card">
-                <div className="project-image">
-                  <img
-                    src={project.image}
-                    alt={project.name}
-                    className="project-img"
-                  />
-                </div>
-
-                <div className="project-details">
-                  <span className="project-category">
-                    {project.category}
-                  </span>
-
-                  <h3 className="project-name">{project.name}</h3>
-
-                  <p className="project-desc">
-                    {project.description}
-                  </p>
-
-                  <div className="project-tech-stack">
-                    {project.technologies.map((tech) => (
-                      <span key={tech} className="tech-badge">
-                        {tech}
-                      </span>
-                    ))}
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "40px", color: "var(--muted)" }}>
+              Loading portfolio projects…
+            </div>
+          ) : (
+            <div className="portfolio-grid">
+              {filteredProjects.map((project) => (
+                <div key={project.id} className="project-card">
+                  <div className="project-image">
+                    <img
+                      src={project.imageUrl || (project as any).image}
+                      alt={project.name || (project as any).title}
+                      className="project-img"
+                    />
                   </div>
 
-                  <div className="project-actions">
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-secondary btn-sm w-full"
-                    >
-                      Live Demo →
-                    </a>
+                  <div className="project-details">
+                    <span className="project-category">
+                      {project.category}
+                    </span>
+
+                    <h3 className="project-name">{project.name || (project as any).title}</h3>
+
+                    <p className="project-desc">
+                      {project.description}
+                    </p>
+
+                    <div className="project-tech-stack">
+                      {Array.isArray(project.technologies)
+                        ? project.technologies.map((tech) => (
+                            <span key={tech} className="tech-badge">
+                              {tech}
+                            </span>
+                          ))
+                        : String(project.technologies).split(",").map((t) => (
+                            <span key={t} className="tech-badge">
+                              {t.trim()}
+                            </span>
+                          ))}
+                    </div>
+
+                    <div className="project-actions">
+                      <a
+                        href={project.liveUrl || (project as any).demoUrl || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-secondary btn-sm w-full"
+                      >
+                        Live Demo →
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

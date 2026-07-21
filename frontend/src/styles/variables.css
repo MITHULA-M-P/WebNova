@@ -14,6 +14,11 @@
   --border: #e2e8f0;
   --border-dark: #cbd5e1;
 
+  /* Card & Surface */
+  --surface-card: #ffffff;
+  --surface-hover: #f1f5f9;
+  --input-bg: #ffffff;
+
   /* Gradients */
   --grad-hero: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%);
   --grad-primary: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
@@ -50,4 +55,37 @@
 
   /* Container */
   --container: 1200px;
+}
+
+/* ── Dark Theme Overrides ── */
+[data-theme="dark"] {
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: rgba(59, 130, 246, 0.15);
+  --accent: #22d3ee;
+
+  --secondary: #f8fafc;
+  --text: #cbd5e1;
+  --muted: #94a3b8;
+  --background: #0b0f19;
+  --white: #111827;
+  --border: #1f2937;
+  --border-dark: #374151;
+
+  --surface-card: #111827;
+  --surface-hover: #1f2937;
+  --input-bg: #1f2937;
+
+  --grad-hero: linear-gradient(135deg, #030712 0%, #0f172a 60%, #1e3a8a 100%);
+  --grad-primary: linear-gradient(135deg, #3b82f6 0%, #22d3ee 100%);
+  --grad-card: linear-gradient(145deg, #111827, #1f2937);
+
+  --glass-bg: rgba(0, 0, 0, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow: 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-md: 0 16px 40px rgba(0,0,0,0.6);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,0.7);
+  --shadow-blue: 0 8px 30px rgba(59,130,246,0.25);
 }
