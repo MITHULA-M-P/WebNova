@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Customer {
@@ -13,8 +13,8 @@ model Customer {
   email         String        @unique
   phone         String
   created_at    DateTime      @default(now())
-  plans         WebsitePlan[]
   bookings      Booking[]
+  plans         WebsitePlan[]
 
   @@map("customers")
 }
@@ -29,9 +29,8 @@ model WebsitePlan {
   brand_color   String?
   has_logo      Boolean   @default(false)
   created_at    DateTime  @default(now())
-  
-  customer      Customer  @relation(fields: [customer_id], references: [id], onDelete: Cascade)
   features      Feature[]
+  customer      Customer  @relation(fields: [customer_id], references: [id], onDelete: Cascade)
 
   @@map("website_plans")
 }
@@ -40,7 +39,6 @@ model Feature {
   id           Int         @id @default(autoincrement())
   plan_id      Int
   feature_name String
-
   plan         WebsitePlan @relation(fields: [plan_id], references: [id], onDelete: Cascade)
 
   @@map("features")
@@ -54,8 +52,17 @@ model Booking {
   status       String   @default("pending")
   message      String?
   created_at   DateTime @default(now())
-
   customer     Customer @relation(fields: [customer_id], references: [id], onDelete: Cascade)
 
   @@map("bookings")
+}
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+
+  @@map("admins")
 }

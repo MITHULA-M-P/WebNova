@@ -25,10 +25,13 @@ app.get("/", async (req, res) => {
   }
 });
 
+const adminRoutes = require('./routes/adminRoutes');
+
 // API Routes
 app.use("/api/planner", plannerRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/templates", templateRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404
 app.use((req, res) => {

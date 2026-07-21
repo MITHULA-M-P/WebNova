@@ -1,0 +1,222 @@
+/* ═══════════════════════════════════════
+   Admin Login Page — Login.module.css
+═══════════════════════════════════════ */
+
+/* Split layout */
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+}
+
+/* ── Left brand panel ── */
+.brand {
+  position: relative;
+  flex: 1;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 3rem;
+}
+.brandContent {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  max-width: 380px;
+}
+.logoText {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #60a5fa;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.5px;
+}
+.brandHeading {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+.brandSub {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+.brandStats {
+  display: flex;
+  gap: 2rem;
+}
+.brandStat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.statNum {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #60a5fa;
+}
+.statLabel {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+/* decorative blobs */
+.brand::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: rgba(96, 165, 250, 0.08);
+  top: -120px;
+  right: -120px;
+  pointer-events: none;
+}
+.brand::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(96, 165, 250, 0.06);
+  bottom: -90px;
+  left: -90px;
+  pointer-events: none;
+}
+
+/* ── Right form panel ── */
+.formPanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  padding: 3rem 2rem;
+}
+.formCard {
+  width: 100%;
+  max-width: 430px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.8rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+.formTitle {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+}
+.formSub {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+/* Form fields */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #334155;
+}
+.input {
+  width: 100%;
+  padding: 0.78rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.input::placeholder {
+  color: #94a3b8;
+}
+.input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  background: #ffffff;
+}
+
+/* Submit button */
+.submitBtn {
+  width: 100%;
+  padding: 0.88rem;
+  background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: opacity 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  letter-spacing: 0.2px;
+}
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Loader spinner */
+.btnLoader {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disclaimer */
+.disclaimer {
+  margin-top: 1.5rem;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .brand {
+    display: none;
+  }
+  .formPanel {
+    padding: 2rem 1rem;
+  }
+  .formCard {
+    padding: 2rem 1.5rem;
+  }
+}
+

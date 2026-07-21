@@ -13,26 +13,42 @@ import BookCall from "./pages/BookCall";
 import Blueprint from "./pages/Blueprint";
 import NotFound from "./pages/NotFound";
 
+// Admin pages — NOT shown in public nav/footer
+import AdminLogin from "./admin/pages/Login";
+import AdminDashboard from "./admin/pages/Dashboard";
+
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <Routes>
+        {/* Admin routes — standalone, no Navbar or Footer */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/templates" element={<Templates />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/reviews" element={<Reviews />} />
-          <Route path="/planner" element={<Planner />} />
-          <Route path="/book-call" element={<BookCall />} />
-          <Route path="/blueprint" element={<Blueprint />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-
-      <Footer />
+        {/* Public routes — wrapped with Navbar and Footer */}
+        <Route
+          path="/*"
+          element={
+            <>
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/templates" element={<Templates />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/reviews" element={<Reviews />} />
+                  <Route path="/planner" element={<Planner />} />
+                  <Route path="/book-call" element={<BookCall />} />
+                  <Route path="/blueprint" element={<Blueprint />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              <Footer />
+            </>
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 }
