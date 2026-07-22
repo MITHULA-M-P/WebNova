@@ -1,4 +1,4 @@
-.rvp-section { background: white; padding: 90px 0; }
+.rvp-section { background: var(--white); padding: 90px 0; }
 .rvp-header { margin-bottom: 52px; }
 
 .rvp-grid {

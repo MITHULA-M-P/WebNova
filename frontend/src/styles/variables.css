@@ -55,6 +55,10 @@
 
   /* Container */
   --container: 1200px;
+
+  /* Navbar */
+  --navbar-bg: rgba(255, 255, 255, 0.85);
+  --navbar-bg-scrolled: rgba(255, 255, 255, 0.97);
 }
 
 /* ── Dark Theme Overrides ── */
@@ -88,4 +92,7 @@
   --shadow-md: 0 16px 40px rgba(0,0,0,0.6);
   --shadow-lg: 0 24px 60px rgba(0,0,0,0.7);
   --shadow-blue: 0 8px 30px rgba(59,130,246,0.25);
+
+  --navbar-bg: rgba(11, 15, 25, 0.85);
+  --navbar-bg-scrolled: rgba(17, 24, 39, 0.97);
 }

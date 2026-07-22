@@ -1,7 +1,7 @@
 /* Blueprint styles */
 .blueprint-section{
     padding:80px 20px;
-    background:#f8fafc;
+    background:var(--background);
 }
 
 .blueprint-container{
@@ -12,17 +12,18 @@
 .blueprint-container h1{
     text-align:center;
     margin-bottom:40px;
+    color: var(--secondary);
 }
 
 .blueprint-card{
-    background:white;
+    background:var(--white);
     padding:40px;
     border-radius:16px;
     box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
 .blueprint-card h2{
-    color:#2563eb;
+    color:var(--primary);
 }
 
 .blueprint-grid{
@@ -38,11 +39,12 @@
 }
 
 .summary{
-    background:#eff6ff;
+    background:var(--primary-light);
     padding:25px;
     border-radius:12px;
     text-align:center;
     margin:30px 0;
+    color: var(--text);
 }
 
 .blueprint-btn{
